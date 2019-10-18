@@ -43,13 +43,9 @@ def combine(filename,n_points):
 		combination = ''
 		#check to make sure same time stamp and ignore other fractional timesteps
 		if time[i] != time_last and time[i] == time[i+1] and time[i] == time[i+2]:
-			#if qSF[i][0] < 0:
-			#	print(qSF[i])
-			#	qSF[i] = [-qSF[i][j] for j in range(4)]
-			#	qSF[i+1] = [-qSF[i][j] for j in range(4)]
-			#	qSF[i+2] = [-qSF[i][j] for j in range(4)]
 			time_return.append(time[i])
 			time_frac_return.append(time_frac[i])
+			
 			#only quaternions with "low" enough confidence are useful
 			if confid[i] <= 5:
 				q1C = sp.qxq(qSF[i],Q_SF2C[0]) #NOT commutative

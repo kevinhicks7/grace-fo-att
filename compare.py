@@ -133,36 +133,7 @@ ax2.set_ylim((-range,range))
 ax3.set_title('Euler Z')
 ax3.set_ylim((-range,range))
 
-#ax4.set_title('I')
-#ax5.set_title('J')
-#ax6.set_title('K')
 plt.xlabel('Time')
 plt.ylabel('Radians')
 plt.savefig('AvsB.png',dpi=1000)
 print('Plotted and saved figure.')
-
-'''
-q_diff = [sp.qxq([Q1A[i][0],-Q1A[i][1],-Q1A[i][2],-Q1A[i][3]],Q1B[i])[0] for i in range(num_points)]
-theta_AB = [2*np.arccos(q_diff[i]) for i in range(num_points)]
-theta_AB = [2*np.arccos(sp.qxq([Q1A[i][0],-Q1A[i][1],-Q1A[i][2],-Q1A[i][3]],Q1B[i])[0]) for i in range(num_points)]
-theta_AB = [abs(theta_AB[i]) % 3.14159 for i in range(num_points)]
-ax1.scatter([i for i in range(num_points)],theta_AB,s = .05,c=colorsB)
-
-compute using inverse tan
-ax2.scatter([i for i in range(num_points)],[2*np.arctan2(np.linalg.norm(sp.qxq([Q1A[i][0],-Q1A[i][1],-Q1A[i][2],-Q1A[i][3]],Q1B[i])[1:]),sp.qxq([Q1A[i][0],-Q1A[i][1],-Q1A[i][2],-Q1A[i][3]],Q1B[i])[0]) for i in range(num_points)],s = .05,c=colorsB)
-
-plot difference between scalar parts of quaternions
-ax3.scatter([i for i in range(num_points)],[abs(Q1A[i][0])-abs(Q1B[i][0]) for i in range(num_points)],s =.05,c=colorsB)
-plot difference between i components
-ax4.scatter([i for i in range(num_points)],[abs(Q1A[i][1])-abs(Q1B[i][1]) for i in range(num_points)],s =.05,c=colorsB)
-plot difference between j components
-ax5.scatter([i for i in range(num_points)],[abs(Q1A[i][2])-abs(Q1B[i][2]) for i in range(num_points)],s =.05,c=colorsB)
-plot difference between k components
-ax6.scatter([i for i in range(num_points)],[abs(Q1A[i][3])-abs(Q1B[i][3]) for i in range(num_points)],s =.05,c=colorsB)
-errorcount = 0
-for i in range(num_points):
-    if theta_AB[i] > .02:
-        errorcount += 1
-
-print(errorcount/num_points*100)
-'''
