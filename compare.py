@@ -11,7 +11,7 @@ plt.switch_backend('agg')
 f, (ax1,ax2,ax3) = plt.subplots(3,1,sharex=True)
 
 num_points = 1
-[T1A,C1A, Q1A] = combine_A.combine('SCA_1A/6-26/SCA1A_2019-06-26_C_04.txt',num_points)
+[T1A,Tf1A,C1A, Q1A] = combine_A.combine('SCA_1A/6-26/SCA1A_2019-06-26_C_04.txt',num_points)
 print('Combined A')
 [T1B,C1B, Q1B] = read_B.read('SCA_1B/6-26/SCA1B_2019-06-26_C_04.txt',num_points)
 print('Read B')
@@ -67,7 +67,7 @@ for i in range(0,len(Q1A)):
     elif C1B[i] == '23':
         colorsB.append('blue') #1,2,3,IMU
 
-num_points = int(len(Q1A))
+num_points = int(len(Q1A)/10) - 1
 M1A = []
 M1B = []
 eul_x = []
@@ -79,7 +79,12 @@ sum_t_diff = 0
 for i in range(num_points):
     #check times are same
     if abs(T1A[i]-T1B[i]) != 0:
-        continue
+        print('Time mismatch')
+        break
+
+    #linearly interpolate B quaternions to match A partial times
+    for k in range(4):
+        Q1B[i][k] = Q1B[i][k] + (Q1B[i+1][k]-Q1B[i][k])*Tf1A[i]/10**6
 
     #calculate angle differences between attitude measurements
     M1A.append(sp.q2m(Q1A[i]))
@@ -120,7 +125,7 @@ blue = mpatches.Patch(color='blue',label='1-2-3')
 ax1.legend(handles=[red,blue],loc=1,prop={'size':6})
 
 #Titles
-range = .5
+range = .001
 ax1.set_title('Euler X')
 ax1.set_ylim((-range,range))
 ax2.set_title('Euler Y')

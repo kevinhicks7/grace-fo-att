@@ -14,6 +14,7 @@ def combine(filename,n_points):
 
 	#Parse Data
 	time  = []
+	time_frac = []
 	ID = []
 	qSF = []
 	confid = []
@@ -21,6 +22,7 @@ def combine(filename,n_points):
 		#get rid of newline and then convert string to array
 		data[i] = data[i].rstrip().split(' ')
 		time.append(int(data[i][0]))
+		time_frac.append(int(data[i][1]))
 		ID.append(data[i][3])
 		qSF.append([float(i) for i in data[i][5:9]])
 		confid.append(int(data[i][11]))
@@ -34,6 +36,7 @@ def combine(filename,n_points):
 	q_opt = []
 	comb_type = []
 	time_return = []
+	time_frac_return = []
 	time_last = 0
 	for i in range(0,int(len(data)),3):
 		q_valid = []
@@ -46,6 +49,7 @@ def combine(filename,n_points):
 			#	qSF[i+1] = [-qSF[i][j] for j in range(4)]
 			#	qSF[i+2] = [-qSF[i][j] for j in range(4)]
 			time_return.append(time[i])
+			time_frac_return.append(time_frac[i])
 			#only quaternions with "low" enough confidence are useful
 			if confid[i] <= 5:
 				q1C = sp.qxq(qSF[i],Q_SF2C[0]) #NOT commutative
@@ -70,4 +74,4 @@ def combine(filename,n_points):
 			else:
 				q_opt.append(opt_comb.opt_comb3(q_valid[0],q_valid[1],q_valid[2]))
 		time_last = time[i]
-	return [time_return,comb_type,q_opt]
+	return [time_return,time_frac_return,comb_type,q_opt]
