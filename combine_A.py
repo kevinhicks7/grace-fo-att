@@ -23,7 +23,7 @@ def combine(filename,n_points):
 		data[i] = data[i].rstrip().split(' ')
 		time.append(int(data[i][0]))
 		time_frac.append(int(data[i][1]))
-		ID.append(data[i][3])
+		ID.append(int(data[i][3]))
 		qSF.append([float(i) for i in data[i][5:9]])
 		confid.append(int(data[i][11]))
 
@@ -38,28 +38,44 @@ def combine(filename,n_points):
 	time_return = []
 	time_frac_return = []
 	time_last = 0
+	comb_type = []
 	for i in range(0,int(len(data)),3):
 		q_valid = []
-		combination = ''
+		combination = []
+
 		#check to make sure same time stamp and ignore other fractional timesteps
 		if time[i] != time_last and time[i] == time[i+1] and time[i] == time[i+2]:
 			time_return.append(time[i])
 			time_frac_return.append(time_frac[i])
-			
-			#only quaternions with "low" enough confidence are useful
-			if confid[i] <= 5:
-				q1C = sp.qxq(qSF[i],Q_SF2C[0]) #NOT commutative
-				q_valid.append(q1C)
-				combination += '1'
+			#extract quaternions with low enough confidence and
+			for k in range(0,3):
+				if confid[i+k] <= 5:
+					#print(i+k-1)
+					#print(ID[i+k-1])
+					#print(qSF[i+k])
+					qC = sp.qxq(qSF[i+k],Q_SF2C[ID[i+k]-1]) #-1 to match 0 based indexing
+					q_valid.append(qC)
+					combination.append(int(ID[i+k]))
+
+
+			#format combination into string in ascending order
+			combination.sort()
+			#print(combination)
+			#combination[combination != 0]
+			comb_type.append(''.join(str(x) for x in combination))
+
+
+			'''
 			if confid[i+1] <= 5:
 				q2C = sp.qxq(qSF[i+1],Q_SF2C[1])
 				q_valid.append(q2C)
-				combination += '2'
+				combination = int(ID[i+1])
 			if confid[i+2] <= 5:
 				q3C = sp.qxq(qSF[i+2],Q_SF2C[2])
 				q_valid.append(q3C)
-				combination += '3'
+				combination = int(ID[i+2])
 			comb_type.append(combination)
+			'''
 			#find optimal combination of quaternions
 			if len(q_valid) == 1:
 				q_opt.append(q_valid[0])
@@ -68,6 +84,9 @@ def combine(filename,n_points):
 			elif len(q_valid) == 0:
 				print('No valid star tracker readings')
 			else:
+				#try with only 1-3 combination
+				#q_opt.append(opt_comb.opt_comb2(q_valid[0],q_valid[2],'13'))
 				q_opt.append(opt_comb.opt_comb3(q_valid[0],q_valid[1],q_valid[2]))
+
 		time_last = time[i]
 	return [time_return,time_frac_return,comb_type,q_opt]
