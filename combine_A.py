@@ -84,8 +84,6 @@ def combine(filename,n_points):
 			elif len(q_valid) == 0:
 				print('No valid star tracker readings')
 			else:
-				#try with only 1-3 combination
-				#q_opt.append(opt_comb.opt_comb2(q_valid[0],q_valid[2],'13'))
 				q_opt.append(opt_comb.opt_comb3(q_valid[0],q_valid[1],q_valid[2]))
 
 		time_last = time[i]
